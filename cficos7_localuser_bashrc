@@ -1,0 +1,60 @@
+# .bashrc
+#  _______________________ 
+# < .bashrc for localuser >
+#  ----------------------- 
+#         \   ^__^
+#          \  (oo)\_______
+#             (__)\       )\/\
+#                 ||----w |
+#                 ||     ||
+# 
+# 2014-12-11 REV. - davidr (for Kickstart distribution)
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+	. /etc/bashrc
+fi
+# Uncomment the following line if you don't like systemctl's auto-paging feature:
+# export SYSTEMD_PAGER=
+
+# Custom aliases
+alias l='ls -las'
+alias s='cd ..'
+alias rm='rm -i'
+alias df='df -H'
+
+alias ulb='cd /usr/local/bin'
+alias uls='cd /usr/local/sbin'
+alias lc='/usr/local/bin/lastcf3run.sh'
+alias us='cd /export/users'
+
+# Report what distro / version / kernel the current host has:
+alias rh='cat /etc/redhat-release;uname -r'
+
+# Display current system load:
+alias load="python -c 'import os;print os.getloadavg()[0]'"
+# How is the swap...
+alias seeswap='sudo /usr/local/sbin/swapstat.sh | grep -v "used: 0 " | sort -nk 5'
+
+# Relaunch the last command in history with sudo powers:
+alias fuck='sudo $(history -p \!\!)'
+alias fu='sudo $(history -p \!\!)'
+
+# My preferred prompt:
+# PS1="[\u@\h \w]\$ ";export PS1 
+export PS1='\[\e[0;31m\]\t\[\e[0;32m\] \u@\h:\w/\$\[\e[m\] '
+
+#  _______________ 
+# < Linux rocks ! >
+#  --------------- 
+#    \
+#     \
+#         .--.
+#        |o_o |
+#        |:_/ |
+#       //   \ \
+#      (|     | )
+#     /'\_   _/`\
+#     \___)=(___/
+# 
+## EOF ##

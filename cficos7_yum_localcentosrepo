@@ -1,0 +1,25 @@
+# local (Mycompany) mirror of CentOS base and updates
+# (requires yum-priorities and  yum-protectbase packages)
+# 27sep2011/davidr : Repository moved to vega
+#                    Vega updating 4 x day against official mirrors.
+# 11dec2014/davidr : Revision for CentOS 7
+
+[local-base]
+name=CentOS-$releasever - Base (local mirror)
+baseurl= https://vega.myuni.edu/linux/centos/$releasever/os/$basearch/
+enabled=1
+gpgcheck=1
+gpgkey=http://mirror.centos.org/centos/RPM-GPG-KEY-CentOS-7
+priority=1
+protect=yes
+
+[local-updates]
+name=CentOS-$releasever - Updates (local mirror)
+baseurl=https://vega.myuni.edu/linux/centos/$releasever/updates/$basearch/
+enabled=1
+gpgcheck=1
+gpgkey=http://mirror.centos.org/centos/RPM-GPG-KEY-CentOS-7
+priority=1
+protect=yes
+
+#EOF

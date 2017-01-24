@@ -1,0 +1,64 @@
+################################################################################
+# DHCP CLIENT CUSTOM CONFIGURATION
+# 06may2014/davidr - Mycompany Lab @ MYUNI
+# 12dec2014/revision for CentOS 7
+# 25jan2016/revision - add eth0 although it seems not to be used any more.
+# 15sep2016/davidr - Change IP of IPA DNS to that of new server caprica.
+#
+# In order for IPA directory services to work, it is recommended that the
+# IPA server itself acts as a DNS server.
+#
+# "caprica", the IPA server has been configured as a forwarding DNS server, as
+# such it only relays requests to the actual departmental servers, while
+# complying with the IPA requirement.
+#
+# As resolver settings are received by the dhclient from the DHCP server
+# (external to Mycompany), we must seed the reference to the internal DNS
+# via this prepend declaration, so that caprica is not only declared but
+# takes precedence over the others; hoever, the daemon should fall back to
+# those in case of caprica becoming unavailable.
+#
+# This file declares caprica as DNS server, prepending it before the
+# DHCP-server delivered DNS values.
+# Note that dhclient is child of NetworkManager, therefore to enact this
+# configuration restart NetworkManager (or reboot the machine).
+#
+################################################################################
+#
+# DHCP Client Configuration file.
+#   see /usr/share/doc/dhclient-*/dhclient.conf.sample
+#   see dhclient.conf(5) man page
+
+send dhcp-client-identifier = hardware;
+
+# Point to caprica as precursive DNS (local to Mycompany LAN). IPA implementation.
+# eth0 seems now old school - newer installs rename it to one of the other
+# strings listed below. This (wants to be) a catch-all file.
+interface "eth0" {
+    prepend domain-name-servers 192.168.1.104;
+}
+
+interface "em1" {
+    prepend domain-name-servers 192.168.1.104;
+}
+# 15sep2014/davidr: Some systems use yet another name for the eth0:
+interface "p3p1" {
+    prepend domain-name-servers 192.168.1.104;
+}
+# 11dec2014/davidr: Some systems use yet another name for the eth0: (academia)
+interface "ens3" {
+    prepend domain-name-servers 192.168.1.104;
+}
+# 12dec2014/davidr: Some systems use yet another name for the eth0:
+# This was found on 'homset':
+interface "enp3s0" {
+    prepend domain-name-servers 192.168.1.104;
+}
+# This was found on topaz:
+interface "enp4s0" {
+    prepend domain-name-servers 192.168.1.104;
+}
+# This is crazy - yet another one found (bern):
+interface "enp0s25" {
+    prepend domain-name-servers 192.168.1.104;
+}

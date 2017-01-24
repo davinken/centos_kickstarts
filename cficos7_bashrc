@@ -1,0 +1,89 @@
+# .bashrc
+# ____________________
+# < root user .bashrc >
+#  ------------------- 
+#         \   ^__^
+#          \  (oo)\_______
+#             (__)\       )\/\
+#                 ||----w |
+#                 ||     ||
+
+# 2010-2012-2014-2015-2016 / davidr
+# Provided via Kickstart (Mycompany customization).
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+	. /etc/bashrc
+fi
+
+# User specific aliases and functions
+# David Ramirez / April 2010 / Rev 2016
+alias l='ls -laps'
+alias ll='ls -laps'
+alias s='cd ..'
+alias tl='tail -250 /var/log/messages'
+alias tls='tail -200 /var/log/secure'
+alias hd='hexdump -C'
+alias lc='/usr/local/bin/lastcf3run.sh'
+alias z='echo You are already root'
+
+export EDITOR=/usr/bin/vim
+
+# Useful for sysadmin: inquiry when was the last login of a given user:
+# alias lastlogin='grep /admin/infosvr/lastlogindata/LASTLOG.byuid'
+
+# Aliases for quering some system data from command line:
+alias servicetag='/usr/bin/sudo /usr/sbin/smbios-sys-info-lite | grep "Service Tag"'
+alias mymac='/usr/bin/sudo /sbin/ifconfig -a | grep HWaddr | grep eth0 | cut -f 11 -d" "'
+alias mycpu='cat /proc/cpuinfo | grep "model name";cat /proc/meminfo | grep MemTotal'
+alias bogo='dmesg | grep Total | grep BogoMIPS;mycpu'
+alias mydisk='/usr/bin/sudo dmesg | grep hd | grep GB|sudo dmesg | grep sd | grep GB'
+
+# Report what distro / version / kernel the current host has:
+alias rh='cat /etc/centos-release;uname -rsm;uptime'
+
+# Navigate fast to /usr/local/bin and sbin
+alias ulb='cd /usr/local/bin'
+alias uls='cd /usr/local/sbin'
+alias ulbru='cd /usr/local/bru-server'
+alias us='cd /export/users'
+alias re='cd /export/research'
+alias sc='cd /export/scratch'
+alias xar='cd /export/archive'
+
+# Some convenient modifications to usual commands:
+alias rm='rm -i'
+alias df='df -H'
+
+# Relaunch the last command in history with sudo powers:
+alias fuck='sudo $(history -p \!\!)'
+alias fu='sudo $(history -p \!\!)'
+
+alias vnet='multitail -R 2 -l "netstat -t"'
+
+# My preferred prompt: (Why root doesn't show # ?)
+# PS1="[\u@\h \w]\$ ";export PS1 
+#
+# Some ANSI-coloring for the prompt.
+# Lower case: dark/regular; upper case: bright/bold. Pick what you like.
+red='\[\e[0;31m\]'
+RED='\[\e[1;31m\]'
+blue='\[\e[0;34m\]'
+BLUE='\[\e[1;34m\]'
+cyan='\[\e[0;36m\]'
+CYAN='\[\e[1;36m\]'
+green='\[\e[0;32m\]'
+GREEN='\[\e[1;32m\]'
+yellow='\[\e[0;33m\]'
+YELLOW='\[\e[1;33m\]'
+PURPLE='\[\e[1;35m\]'
+purple='\[\e[0;35m\]'
+nc='\[\e[0m\]'
+
+if [ "$UID" = 0 ]; then
+    PS1="$RED\u$nc@$yellow\H$nc:$red\w$nc$red\$$nc "
+else
+    PS1="$blue\u$nc@$green\H$nc:$yellow\w$nc$yellow\$$nc "
+fi
+
+## EOF ##

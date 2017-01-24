@@ -1,0 +1,5 @@
+# crontab for root
+@reboot /var/cfengine/bin/cf-agent --self-diagnostics | grep ' Check that agent is bootstrapped: Not bootstrapped' && /var/cfengine/bin/cf-agent --bootstrap 192.168.1.2
+@reboot /bin/df -h | /bin/mail -s "Workstation Reboot alert:"$HOSTNAME mycompany_sysadmin@myuni.edu
+*/5 * * * * ( /usr/bin/pgrep cf-execd > /dev/null ) || /var/cfengine/bin/cf-execd
+

@@ -1,0 +1,37 @@
+#
+# /etc/nsswitch.conf
+#
+#########################################################
+# nsswitch.conf for IPA clients
+#               21jul2014/davidr 
+#               05dec2014/davidr - Kickstart revision.
+#               25oct2016/davidr - Added sudoers via sss (IPA)
+#########################################################
+#
+passwd:     files sss
+shadow:     files sss
+group:      files sss
+#initgroups: files
+
+#hosts:     db files nisplus nis dns
+hosts:      files mdns4_minimal [NOTFOUND=return] dns
+
+bootparams: nisplus [NOTFOUND=return] files
+
+ethers:     files
+netmasks:   files
+networks:   files
+protocols:  files
+rpc:        files
+services:   files sss
+
+netgroup:   files sss
+
+publickey:  nisplus
+
+automount:  files sss
+aliases:    files nisplus
+
+sudoers:    files sss
+
+## EOF ##

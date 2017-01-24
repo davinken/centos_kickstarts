@@ -1,0 +1,75 @@
+#!/bin/sh
+
+# join_ipa.sh
+# 10feb2016/davidr - MyLab
+# 13oct2016/davidr - REVISION TO AUTOMATE IPA4. DO SOME PARAMETER FIXES.
+
+# YOU NEED TO UPDATE YOUR OWN IP DATA
+
+# This will invoke the join_ipa expect to launch & automatically sign up with
+# the IPA host (1st time).o
+
+# This takes care of bad / left-over certificates (if any).
+THISHOST=`hostname -s`
+BADCACRT=/etc/ipa/ca.crt
+# And we will check the network scripts to see if they need attention
+# (Servers only, or those machines configured for statics addresses, not
+# DHCP - this is tested).
+NETWORKSCRIPTSDIR=/etc/sysconfig/network-scripts
+
+TMP1=`mktemp`
+
+################################################################################
+fixdnsconfigs () {
+echo -n "Static IP networking configuration - fix DNS part"
+# Update the network configurations (only for non-dhcp systems e..g servers)
+sed -i 's/192\.168\.1\.36/192\.168\.1\.104/' /etc/resolv.conf
+sed -i '/GATEWAY/d' /etc/sysconfig/network
+
+# The network script will now contain DNS+GATEWAY data. 
+grep -q 'DNS1' $IFCFGFILE || sed -i '$ a DNS1=192.168.1.104' $IFCFGFILE
+grep -q 'DNS2' $IFCFGFILE || sed -i '$ a DNS2=192.168.1.1' $IFCFGFILE
+grep -q 'GATEWAY' $IFCFGFILE || sed -i '$ a GATEWAY=192.168.1.254' $IFCFGFILE
+# Sort just for aesthetics:
+sort $IFCFGFILE > $TMP1
+cp -f $TMP1 $IFCFGFILE
+sleep 1
+echo ".... done"
+}
+################################################################################
+
+# Detect which CentOS:
+COS=UNKNOWN
+echo `uname -r` | grep -q 'el7' && COS=7
+echo `uname -r` | grep -q 'el6' && COS=6
+
+# Determine the actual network script file, usually ifcfg-eth0 but may
+# change in some systems. It is just the 1st in the directory.
+IFCFGFILE=$NETWORKSCRIPTSDIR/`ls -1 $NETWORKSCRIPTSDIR | head -1`
+
+# Find out if the old certificate was left over by unclean uninstall of old IPA:
+[[ -e "$BADCACRT" ]]  && mv /etc/ipa/ca.crt /etc/ipa/ca.crt-TAURON
+
+# If this is a machine with static network configs, make sure the DNS data
+# is also configured:
+grep -q 'static' $IFCFGFILE && fixdnsconfigs
+
+# Also get rid from legacy / now unwanted configs in /etc/hosts:
+sed -i "/$THISHOST/d" /etc/hosts
+
+# Make it effective before proceeding with actually joining IPA4.
+if [ "$COS" = "6" ]
+then
+   echo "COS$COS detected. Restarting network."
+   service network restart
+else
+   echo "COS$COS detected. Restarting network."
+   systemctl restart network
+fi
+
+sleep 1
+echo "Preparing for IPA affiliation..."
+sleep 1
+expect /root/join_ipa.exp
+
+## EOF ##

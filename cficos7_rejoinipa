@@ -1,0 +1,60 @@
+#!/bin/expect -f
+# rejoin_ipa.exp
+# 10feb2016/davidr - Mycompany Lab @ MYUNI.
+# Will simulate an interaction with the ipa-client-install command that
+# signs up the current host into the IPA/LDAP domain.
+# Similar to join_ipa.exp but this one will add the --force-join option
+# to the command, in order to override refusal due to duplicate entry.
+
+# Note that a plain password for LDAP is given here - this script must be
+# restricted accordlingly.
+
+# Usage will be (as root on an arbitrary system to be enrolled into IPA):
+#   expect rejoin_ipa.exp
+
+set force_conservative 1  ;# set to 1 to force conservative mode even if
+			  ;# script wasn't run conservatively originally
+if {$force_conservative} {
+	set send_slow {1 .1}
+	proc send {ignore arg} {
+		sleep .1
+		exp_send -s -- $arg
+	}
+}
+# When using the -h option to send, simulate human typing with following
+# settings:
+set send_human {.1 .3 1 .05 2}
+
+set timeout 15
+spawn $env(SHELL)
+match_max 192000
+sleep 1
+send -h "ipa-client-install -d --domain=MYLAB.MYUNI.EDU --force-join --server=caprica.myuni.edu"
+expect -exact "ipa-client-install -d --domain=MYLAB.MYUNI.EDU --force-join --server=caprica.myuni.edu"
+send -- "\r"
+expect -exact "\r"
+expect "Proceed with fixed values and no DNS discovery? \[no\]: "
+sleep .1
+send -- "yes\r"
+expect -exact "yes\r"
+expect "Continue to configure the system with these values? \[no\]: "
+sleep .2
+send -- "yes\r"
+expect -exact "yes\r"
+
+expect -exact "User authorized to enroll computers:"
+sleep .2
+send -h "admin\r"
+expect -exact "admin\r"
+
+expect "Password for admin@MYLAB.MYUNI.EDU:"
+sleep .2
+send -h "S4pienS\[TERRA3\]\r"
+sleep .2
+expect -exact "Client configuration complete."
+sleep .5
+
+send -h "sssd_configs_tweak.sh\r"
+expect -exact "sssd_configs_tweak.sh\r"
+expect -exact "autofs restarted."
+expect eof

@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# rejoin_ipa.sh
+# 10feb2016/davidr - Mycompany Lab @ MYUNI
+
+# This will invoke the join_ipa expect to launch & automatically sign up with
+# the IPA host (REJOIN CASE).
+expect /root/rejoin_ipa.exp
+
+## EOF ##

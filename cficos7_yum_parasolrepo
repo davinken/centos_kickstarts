@@ -1,0 +1,8 @@
+# Local repository for ad-hoc packages.
+[mycompany-rhel]
+name=Mycompany RPM Repository for RHEL
+baseurl=https://MycompanyRPM:repository@vega.myuni.edu/yum-repos/centos/$releasever/$basearch
+gpgcheck=0
+protect=1
+priority=2
+enabled=1
